@@ -1,18 +1,43 @@
-# AdivinaElNumero-Desafio-RRT
+# AdivinaElNumero-Desafio-RRT - Flutter Challenge
 
-# flutter_app_demo
+This is a small interactive game developed in Flutter Web as part of a technical assessment. The goal is to guess a secret number within a range that varies depending on the selected difficulty level. The game includes input validation, state management, game history, and a UI adapted for mobile experiences.
 
-A new Flutter project.
+---
 
-## Getting Started
+## 🚀 How to Run the Project
 
-This project is a starting point for a Flutter application.
+> Requirements:
+- Flutter installed on your machine (I recommend placing it at `C:\dev\flutter`)
+- A modern browser (Chrome recommended)
+- Git and VSCode (optional but useful)
 
-A few resources to get you started if this is your first Flutter project:
+## 1. Clone the repository
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+```bash
+git clone https://github.com/RobertoRiveraT/AdivinaElNumero-Desafio-RRT.git
+cd GuessTheNumber-Challenge/flutter_app_demo
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 2. Install dependencies
+
+```bash
+flutter pub get
+```
+
+## 3. Run on Chrome
+
+```bash
+flutter run -d chrome
+```
+
+## Simulate a Mobile Device in Chrome
+
+To test the app as if it were running on a phone:
+
+1. Right-click on the running app and select "Inspect" or press `Ctrl + Shift + I`
+
+2. Click on the 📱 "Toggle device toolbar" icon or press `Ctrl + Shift + M`
+
+3. elect a mobile device at the top (e.g., Pixel 5, iPhone SE)
+
+4. Set zoom to 100% for a more accurate experience
