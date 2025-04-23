@@ -34,30 +34,28 @@ class GameController {
       .map((e) => '${e.number} - ${e.success ? '✔' : '✘'}')
       .toList();
 
-  /// Configura el nivel de dificultad: ajusta rangos y reinicia el juego
+  final Map<String, Map<String, int>> difficultyLevels = {
+    'facil':   {'maxNumber': 10,    'maxAttempts': 5},
+    'medio':   {'maxNumber': 20,    'maxAttempts': 8},
+    'avanzado': {'maxNumber': 100,   'maxAttempts': 15},
+    'extremo': {'maxNumber': 1000,  'maxAttempts': 25},
+  };
+
+  /// Configura el nivel de dificultad desde un mapa predefinido
   void setDifficulty(String level) {
-    switch (level.toLowerCase()) {
-      case 'facil':
-        maxNumber = 10;
-        maxAttempts = 100;
-        break;
-      case 'medio':
-        maxNumber = 20;
-        maxAttempts = 8;
-        break;
-      case 'avanzado':
-        maxNumber = 100;
-        maxAttempts = 15;
-        break;
-      case 'extremo':
-        maxNumber = 1000;
-        maxAttempts = 25;
-        break;
-      default:
-        maxNumber = 10;
-        maxAttempts = 5;
+    final normalizedLevel = level.toLowerCase();
+
+    if (difficultyLevels.containsKey(normalizedLevel)) {
+      final config = difficultyLevels[normalizedLevel]!;
+      maxNumber = config['maxNumber']!;
+      maxAttempts = config['maxAttempts']!;
+    } else {
+      // Valor por defecto
+      maxNumber = 10;
+      maxAttempts = 5;
     }
-    resetGame(); // inicializa secretNumber y remainingAttempts
+
+    resetGame();
   }
 
   // Genera nuevo número secreto y reinicia contadores y listas

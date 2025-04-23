@@ -127,25 +127,29 @@ class _MyHomePageState extends State<MyHomePage> {
                     ],
                   ),
 
-                  const SizedBox(height: 16),
-
                   // === Segunda fila: feedback del resultado ===
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // --- Aquí mostramos el feedback del intento ---
-                      Text(
-                        _feedback,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: _feedback == 'correct'
-                              ? Colors.green
-                              : (_feedback == 'Game over'
-                                  ? Colors.red
-                                  : Colors.black87),
-                        ),
+                  SizedBox(
+                    height: 80, // Aumenta la altura vertical de la fila
+                    child: Center(
+                      // Centra el contenido tanto horizontal como verticalmente
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // --- Aquí mostramos el feedback del intento ---
+                          Text(
+                            _feedback,
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: _feedback == 'correct'
+                                  ? Colors.green
+                                  : (_feedback == 'Game over'
+                                      ? Colors.red
+                                      : Colors.black87),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
 
                   // === Tercera fila: columnas de historial con altura limitada ===
