@@ -4,7 +4,7 @@
 // Ideal para valores que no cambian una vez asignados.
 // final int maxAttempts = 5;
 // final protege la referencia, no el contenido. 
-// Es decir, listas como -history- siempre apuntarán a la misma lista en memoria, pero esa lista puede cambiar internamente.
+// Es decir, listas como -_historyList- siempre apuntarán a la misma lista en memoria, pero esa lista puede cambiar internamente.
 
 // - `final List`: no puedo cambiar la referencia, pero sí su contenido (agregar, quitar).
 // - `const List`: no puedo cambiar ni la referencia ni su contenido. Es totalmente inmutable.
@@ -21,16 +21,25 @@ class GameController {
   late int remainingAttempts;
   late int maxNumber;
   late int maxAttempts;
-  final List<int> greaterThan = [];
-  final List<int> lessThan = [];
-  final List<GuessResult> history = [];
+  // Nota: en dart las variables que empiezan con "_" son privadas
+  final List<int> _greaterThanList = [];
+  final List<int> _lessThanList = [];
+  final List<GuessResult> _historyList = [];
+
+  // Getters
+  // Como guesser_column contiene strings 
+  List<String> get greaterThanList => _greaterThanList.map((e) => '$e').toList();
+  List<String> get lessThanList => _lessThanList.map((e) => '$e').toList();
+  List<String> get historyList => _historyList
+      .map((e) => '${e.number} - ${e.success ? '✔' : '✘'}')
+      .toList();
 
   /// Configura el nivel de dificultad: ajusta rangos y reinicia el juego
   void setDifficulty(String level) {
     switch (level.toLowerCase()) {
       case 'facil':
         maxNumber = 10;
-        maxAttempts = 5;
+        maxAttempts = 100;
         break;
       case 'medio':
         maxNumber = 20;
@@ -56,9 +65,9 @@ class GameController {
     final rand = Random();
     secretNumber = rand.nextInt(maxNumber) + 1;
     remainingAttempts = maxAttempts;
-    greaterThan.clear();
-    lessThan.clear();
-    history.clear();
+    _greaterThanList.clear();
+    _lessThanList.clear();
+    _historyList.clear();
   }
 
   // devuelve feedback
@@ -67,17 +76,19 @@ class GameController {
     remainingAttempts--;
 
     if (guess == secretNumber) {
-      history.add(GuessResult(guess, true));
+      _historyList.add(GuessResult(guess, true));
       return 'correct';
     }
 
     if (guess > secretNumber) {
-      greaterThan.add(guess);
-      history.add(GuessResult(guess, false));
+      //  mayor que: el número que ingresamos (guess) es mayor que el número que queremos adivinar (secretNumber)
+      _greaterThanList.add(guess);
+      _historyList.add(GuessResult(guess, false));
       return 'my alto';
     } else {
-      lessThan.add(guess);
-      history.add(GuessResult(guess, false));
+      //  menor que: el número que ingresamos (guess) es menor que el número que queremos adivinar (secretNumber)
+      _lessThanList.add(guess);
+      _historyList.add(GuessResult(guess, false));
       return 'muy bajo';
     }
   }

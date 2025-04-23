@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../controllers/game_controller.dart';
+import '../ui/widgets/guesser_column.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -76,51 +77,106 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Padding(
               padding: const EdgeInsets.all(16),
               // === Padding interior dentro de la Card ===
-              child: Row(
+              child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // === Sección IZQUIERDA de la Card: input y botón ===
-                  Expanded(
-                    child: Column(
-                      children: [
-                        // --- Aquí va el TextField de entrada de número ---
-                        TextField(
-                          controller: _textCtrl,
-                          keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
-                            labelText: 'Tu número',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        // --- Botón para enviar la conjetura ---
-                        ElevatedButton(
-                          onPressed: _submitGuess,
-                          child: const Text('Adivinar'),
-                        ),
-                        const SizedBox(height: 8),
-                        // --- Texto de feedback (muy alto / muy bajo / correct) ---
-                        Text(_feedback),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  // === Sección DERECHA de la Card: contador de intentos ===
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  // === Primera fila: input y contador ===
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      // --- Etiqueta estática "Intentos" ---
-                      const Text(
-                        'Intentos',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      // === Sección IZQUIERDA de la Card: input y botón ===
+                      Expanded(
+                        child: Column(
+                          children: [
+                            // --- Aquí va el TextField de entrada de número ---
+                            TextField(
+                              controller: _textCtrl,
+                              keyboardType: TextInputType.number,
+                              decoration: const InputDecoration(
+                                labelText: 'Tu número ( x )',
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            // --- Botón para enviar la conjetura ---
+                            ElevatedButton(
+                              onPressed: _submitGuess,
+                              child: const Text('Adivinar'),
+                            ),
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: 8),
-                      // --- Aquí mostramos el número de intentos restantes ---
-                      Text(
-                        '${_controller.remainingAttempts}',
-                        style: const TextStyle(fontSize: 32, color: Colors.indigo),
+                      const SizedBox(width: 16),
+                      // === Sección DERECHA de la Card: contador de intentos ===
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // --- Etiqueta estática "Intentos" ---
+                          const Text(
+                            'Intentos',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 8),
+                          // --- Aquí mostramos el número de intentos restantes ---
+                          Text(
+                            '${_controller.remainingAttempts}',
+                            style: const TextStyle(fontSize: 32, color: Colors.indigo),
+                          ),
+                        ],
                       ),
                     ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // === Segunda fila: feedback del resultado ===
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // --- Aquí mostramos el feedback del intento ---
+                      Text(
+                        _feedback,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: _feedback == 'correct'
+                              ? Colors.green
+                              : (_feedback == 'Game over'
+                                  ? Colors.red
+                                  : Colors.black87),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // === Tercera fila: columnas de historial con altura limitada ===
+                  SizedBox(
+                    height: 180, // Ajusta la altura de la fila de columnas
+                    child: Row(
+                      children: [
+                        // Columna: Mayor que
+                        GuesserColumn(
+                          title: 'Mayor que x',
+                          headerColor: Colors.red.shade700,
+                          entries: _controller.greaterThanList,
+                        ),
+                        const SizedBox(width: 8),
+
+                        // Columna: Menor que
+                        GuesserColumn(
+                          title: 'Menor que x',
+                          headerColor: Colors.blue.shade700,
+                          entries: _controller.lessThanList,
+                        ),
+                        const SizedBox(width: 8),
+
+                        // Columna: Historial
+                        GuesserColumn(
+                          title: 'Historial',
+                          headerColor: Colors.black,
+                          entries: _controller.historyList,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

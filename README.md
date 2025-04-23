@@ -15,7 +15,7 @@ This is a small interactive game developed in Flutter Web as part of a technical
 
 ```bash
 git clone https://github.com/RobertoRiveraT/AdivinaElNumero-Desafio-RRT.git
-cd GuessTheNumber-Challenge/flutter_app_demo
+cd AdivinaElNumero-Desafio-RRT/flutter_app_demo
 ```
 
 ## 2. Install dependencies
