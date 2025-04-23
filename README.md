@@ -6,7 +6,7 @@ This is a small interactive game developed in Flutter Web as part of a technical
 
 ## 🚀 How to Run the Project
 
-> Requirements:
+# Requirements:
 - Flutter installed on your machine (I recommend placing it at `C:\dev\flutter`)
 - A modern browser (Chrome recommended)
 - Git and VSCode (optional but useful)
@@ -38,6 +38,14 @@ To test the app as if it were running on a phone:
 
 2. Click on the 📱 "Toggle device toolbar" icon or press `Ctrl + Shift + M`
 
-3. elect a mobile device at the top (e.g., Pixel 5, iPhone SE)
+3. Select a mobile device at the top (e.g., Pixel 5, iPhone SE)
 
 4. Set zoom to 100% for a more accurate experience
+
+
+## Study material
+
+These are some resources I used to learn and reinforce my understanding of Flutter, Dart, and architecture during the development of this project:
+
+- [How to Structure a Flutter Project (YouTube)](https://www.youtube.com/watch?v=8sAyPDLorek&t=3s) 
+- [Flutter Layout Fundamentals (Official Docs)](https://docs.flutter.dev/get-started/fundamentals/layout#understanding-layout-in-flutter) 

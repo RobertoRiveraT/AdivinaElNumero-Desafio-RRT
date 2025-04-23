@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../controllers/game_controller.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -20,7 +21,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  late GameController _controller;
+  final TextEditingController _textCtrl = TextEditingController();
+  String _feedback = '';
 
+  /*
   void _incrementCounter() {
     setState(() {
       // This call to setState tells the Flutter framework that something has
@@ -31,57 +36,99 @@ class _MyHomePageState extends State<MyHomePage> {
       _counter++;
     });
   }
+  */
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = GameController();
+    _controller.setDifficulty('facil'); // por el momento
+  }
+
+  void _submitGuess() {
+    final input = _textCtrl.text;
+    final guess = int.tryParse(input);
+    if (guess == null) {
+      _feedback = 'Ingrese un número válido';
+    } else {
+      _feedback = _controller.makeGuess(guess);
+    }
+    setState(() {}); // dispara rebuild para actualizar intentos y feedback
+  }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+        // === Este es el contenedor principal centrado ===
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          // === Padding exterior que separa del borde de la pantalla ===
+          child: Card(
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
             ),
-          ],
+            // === Este es el contenedor principal de la Card ===
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              // === Padding interior dentro de la Card ===
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // === Sección IZQUIERDA de la Card: input y botón ===
+                  Expanded(
+                    child: Column(
+                      children: [
+                        // --- Aquí va el TextField de entrada de número ---
+                        TextField(
+                          controller: _textCtrl,
+                          keyboardType: TextInputType.number,
+                          decoration: const InputDecoration(
+                            labelText: 'Tu número',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        // --- Botón para enviar la conjetura ---
+                        ElevatedButton(
+                          onPressed: _submitGuess,
+                          child: const Text('Adivinar'),
+                        ),
+                        const SizedBox(height: 8),
+                        // --- Texto de feedback (muy alto / muy bajo / correct) ---
+                        Text(_feedback),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  // === Sección DERECHA de la Card: contador de intentos ===
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // --- Etiqueta estática "Intentos" ---
+                      const Text(
+                        'Intentos',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 8),
+                      // --- Aquí mostramos el número de intentos restantes ---
+                      Text(
+                        '${_controller.remainingAttempts}',
+                        style: const TextStyle(fontSize: 32, color: Colors.indigo),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+
 }

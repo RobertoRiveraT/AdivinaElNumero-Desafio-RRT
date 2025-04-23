@@ -1,7 +1,3 @@
-
-
-
-
 ///  `final` 
 // significa que la variable solo puede asignarse UNA VEZ (como una constante),
 // pero su valor puede calcularse en tiempo de ejecución.
@@ -18,6 +14,8 @@
 // Se usa cuando no puedes inicializarla al declararla, pero SABES que tendrá un valor más adelante.
 // late int secretNumber;
 
+import 'dart:math';
+
 class GameController {
   late int secretNumber;
   late int remainingAttempts;
@@ -27,17 +25,61 @@ class GameController {
   final List<int> lessThan = [];
   final List<GuessResult> history = [];
 
+  /// Configura el nivel de dificultad: ajusta rangos y reinicia el juego
   void setDifficulty(String level) {
-    // Aquí defines los rangos
+    switch (level.toLowerCase()) {
+      case 'facil':
+        maxNumber = 10;
+        maxAttempts = 5;
+        break;
+      case 'medio':
+        maxNumber = 20;
+        maxAttempts = 8;
+        break;
+      case 'avanzado':
+        maxNumber = 100;
+        maxAttempts = 15;
+        break;
+      case 'extremo':
+        maxNumber = 1000;
+        maxAttempts = 25;
+        break;
+      default:
+        maxNumber = 10;
+        maxAttempts = 5;
+    }
+    resetGame(); // inicializa secretNumber y remainingAttempts
   }
 
-  String makeGuess(int number) {
-    // Validación y lógica del juego
-    // Guarda en history[]
-  }
-
+  // Genera nuevo número secreto y reinicia contadores y listas
   void resetGame() {
-    // Reinicia los valores
+    final rand = Random();
+    secretNumber = rand.nextInt(maxNumber) + 1;
+    remainingAttempts = maxAttempts;
+    greaterThan.clear();
+    lessThan.clear();
+    history.clear();
+  }
+
+  // devuelve feedback
+  String makeGuess(int guess) {
+    if (remainingAttempts <= 0) return 'Game over';
+    remainingAttempts--;
+
+    if (guess == secretNumber) {
+      history.add(GuessResult(guess, true));
+      return 'correct';
+    }
+
+    if (guess > secretNumber) {
+      greaterThan.add(guess);
+      history.add(GuessResult(guess, false));
+      return 'my alto';
+    } else {
+      lessThan.add(guess);
+      history.add(GuessResult(guess, false));
+      return 'muy bajo';
+    }
   }
 }
 
