@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Number Guesser'),
+      home: const MyHomePage(title: 'Adivina el Numero X'),
     );
   }
 }

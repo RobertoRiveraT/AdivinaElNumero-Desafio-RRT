@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../controllers/game_controller.dart';
 import '../ui/widgets/guesser_column.dart';
+import '../ui/widgets/level_selector.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -21,23 +22,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
   late GameController _controller;
   final TextEditingController _textCtrl = TextEditingController();
   String _feedback = '';
-
-  /*
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-  */
+  int _selectedLevelIndex = 0;
 
   @override
   void initState() {
@@ -67,124 +55,146 @@ class _MyHomePageState extends State<MyHomePage> {
         // === Este es el contenedor principal centrado ===
         child: Padding(
           padding: const EdgeInsets.all(16),
-          // === Padding exterior que separa del borde de la pantalla ===
-          child: Card(
-            elevation: 4,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            // === Este es el contenedor principal de la Card ===
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              // === Padding interior dentro de la Card ===
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // === Primera fila: input y contador ===
-                  Row(
+          // === Padding exterior para separar del borde de la pantalla ===
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // === Selector de nivel de dificultad (arriba de la Card) ===
+              LevelSelector(
+                controller: _controller,
+                selectedIndex: _selectedLevelIndex,
+                onLevelChanged: (level) {
+                  setState(() {
+                    _selectedLevelIndex = _controller.getLevels.indexOf(level);
+                    _controller.setDifficulty(level); // reinicia el juego cuando se cambia de nivel 
+                  });
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // === Tarjeta principal del juego ===
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // === Sección IZQUIERDA de la Card: input y botón ===
-                      Expanded(
-                        child: Column(
-                          children: [
-                            // --- Aquí va el TextField de entrada de número ---
-                            TextField(
-                              controller: _textCtrl,
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
-                                labelText: 'Tu número ( x )',
-                                border: OutlineInputBorder(),
-                              ),
+                      // === Primera fila: input del número y contador de intentos ===
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // --- Lado izquierdo: TextField + botón ---
+                          Expanded(
+                            child: Column(
+                              children: [
+                                TextField(
+                                  controller: _textCtrl,
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Tu número ( X )',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                ElevatedButton(
+                                  onPressed: _submitGuess,
+                                  child: const Text('Adivinar X'),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 8),
-                            // --- Botón para enviar la conjetura ---
-                            ElevatedButton(
-                              onPressed: _submitGuess,
-                              child: const Text('Adivinar'),
+                          ),
+                          const SizedBox(width: 16),
+
+                          // --- Lado derecho: contador de intentos ---
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                'Intentos',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                '${_controller.remainingAttempts}',
+                                style: const TextStyle(
+                                  fontSize: 32,
+                                  color: Colors.indigo,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // === Segunda fila: feedback del resultado ===
+                      SizedBox(
+                        height: 80,
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                _feedback,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: _feedback == 'correct'
+                                      ? Colors.green
+                                      : (_feedback == 'Game over'
+                                          ? Colors.red
+                                          : Colors.black87),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // === Tercera fila: columnas de historial con scroll ===
+                      SizedBox(
+                        height: 180,
+                        child: Row(
+                          children: [
+                            // Columna: Mayor que
+                            GuesserColumn(
+                              title: 'mayores que x:',
+                              headerColor: Colors.deepPurple,
+                              entries: _controller.greaterThanList,
+                            ),
+                            const SizedBox(width: 8),
+
+                            // Columna: Menor que
+                            GuesserColumn(
+                              title: 'menores que x:',
+                              headerColor: Colors.deepPurple,
+                              entries: _controller.lessThanList,
+                            ),
+                            const SizedBox(width: 8),
+
+                            // Columna: Historial
+                            GuesserColumn(
+                              title: 'Historial',
+                              headerColor: Colors.black,
+                              entries: _controller.historyList,
                             ),
                           ],
                         ),
                       ),
-                      const SizedBox(width: 16),
-                      // === Sección DERECHA de la Card: contador de intentos ===
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // --- Etiqueta estática "Intentos" ---
-                          const Text(
-                            'Intentos',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 8),
-                          // --- Aquí mostramos el número de intentos restantes ---
-                          Text(
-                            '${_controller.remainingAttempts}',
-                            style: const TextStyle(fontSize: 32, color: Colors.indigo),
-                          ),
-                        ],
-                      ),
                     ],
                   ),
-
-                  // === Segunda fila: feedback del resultado ===
-                  SizedBox(
-                    height: 80, // Aumenta la altura vertical de la fila
-                    child: Center(
-                      // Centra el contenido tanto horizontal como verticalmente
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // --- Aquí mostramos el feedback del intento ---
-                          Text(
-                            _feedback,
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: _feedback == 'correct'
-                                  ? Colors.green
-                                  : (_feedback == 'Game over'
-                                      ? Colors.red
-                                      : Colors.black87),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  // === Tercera fila: columnas de historial con altura limitada ===
-                  SizedBox(
-                    height: 180, // Ajusta la altura de la fila de columnas
-                    child: Row(
-                      children: [
-                        // Columna: Mayor que
-                        GuesserColumn(
-                          title: 'Mayor que x',
-                          headerColor: Colors.red.shade700,
-                          entries: _controller.greaterThanList,
-                        ),
-                        const SizedBox(width: 8),
-
-                        // Columna: Menor que
-                        GuesserColumn(
-                          title: 'Menor que x',
-                          headerColor: Colors.blue.shade700,
-                          entries: _controller.lessThanList,
-                        ),
-                        const SizedBox(width: 8),
-
-                        // Columna: Historial
-                        GuesserColumn(
-                          title: 'Historial',
-                          headerColor: Colors.black,
-                          entries: _controller.historyList,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),

@@ -15,31 +15,34 @@
 // late int secretNumber;
 
 import 'dart:math';
+import 'package:flutter/material.dart';
+import '../models/column_entry.dart'; // 👈 Asegúrate de importar tus modelos
 
 class GameController {
   late int secretNumber;
   late int remainingAttempts;
   late int maxNumber;
   late int maxAttempts;
+
   // Nota: en dart las variables que empiezan con "_" son privadas
-  final List<int> _greaterThanList = [];
-  final List<int> _lessThanList = [];
-  final List<GuessResult> _historyList = [];
+  final List<ColumnEntry> _greaterThanList = [];
+  final List<ColumnEntry> _lessThanList = [];
+  final List<ColumnEntryResult> _historyList = [];
+
+  // Level Configurations
+  final Map<String, Map<String, int>> difficultyLevels = {
+    'facil':    {'maxNumber': 10,    'maxAttempts': 5},
+    'medio':    {'maxNumber': 20,    'maxAttempts': 8},
+    'avanzado': {'maxNumber': 100,   'maxAttempts': 15},
+    'extremo':  {'maxNumber': 1000,  'maxAttempts': 25},
+  };
 
   // Getters
-  // Como guesser_column contiene strings 
-  List<String> get greaterThanList => _greaterThanList.map((e) => '$e').toList();
-  List<String> get lessThanList => _lessThanList.map((e) => '$e').toList();
-  List<String> get historyList => _historyList
-      .map((e) => '${e.number} - ${e.success ? '✔' : '✘'}')
-      .toList();
+  List<ColumnEntry> get greaterThanList => _greaterThanList;
+  List<ColumnEntry> get lessThanList => _lessThanList;
+  List<ColumnEntryResult> get historyList => _historyList;
 
-  final Map<String, Map<String, int>> difficultyLevels = {
-    'facil':   {'maxNumber': 10,    'maxAttempts': 5},
-    'medio':   {'maxNumber': 20,    'maxAttempts': 8},
-    'avanzado': {'maxNumber': 100,   'maxAttempts': 15},
-    'extremo': {'maxNumber': 1000,  'maxAttempts': 25},
-  };
+  List<String> get getLevels => difficultyLevels.keys.toList();
 
   /// Configura el nivel de dificultad desde un mapa predefinido
   void setDifficulty(String level) {
@@ -63,37 +66,37 @@ class GameController {
     final rand = Random();
     secretNumber = rand.nextInt(maxNumber) + 1;
     remainingAttempts = maxAttempts;
+
     _greaterThanList.clear();
     _lessThanList.clear();
-    _historyList.clear();
+    // _historyList.clear(); // No limpiar el historial
   }
 
-  // devuelve feedback
+  // Devuelve feedback textual y actualiza historial
   String makeGuess(int guess) {
-    if (remainingAttempts <= 0) return 'Game over';
+    if ((remainingAttempts <= 1) && !(guess == secretNumber) ) {
+      // la respuesta no se adivinó, mostrar la respeusta en rojo con un "X"
+      _historyList.add(ColumnEntryResult(secretNumber, false, secretNumber));
+      resetGame();
+      return 'Perdiste !!';
+    }
+
     remainingAttempts--;
 
     if (guess == secretNumber) {
-      _historyList.add(GuessResult(guess, true));
+      _historyList.add(ColumnEntryResult(guess, true, secretNumber));
+      resetGame();
       return 'correct';
     }
 
     if (guess > secretNumber) {
-      //  mayor que: el número que ingresamos (guess) es mayor que el número que queremos adivinar (secretNumber)
-      _greaterThanList.add(guess);
-      _historyList.add(GuessResult(guess, false));
-      return 'my alto';
+      _greaterThanList.add(ColumnEntry(guess, secretNumber));
+      // _historyList.add(ColumnEntryResult(guess, false, secretNumber));
+      return 'muy alto';
     } else {
-      //  menor que: el número que ingresamos (guess) es menor que el número que queremos adivinar (secretNumber)
-      _lessThanList.add(guess);
-      _historyList.add(GuessResult(guess, false));
+      _lessThanList.add(ColumnEntry(guess, secretNumber));
+      // _historyList.add(ColumnEntryResult(guess, false, secretNumber));
       return 'muy bajo';
     }
   }
-}
-
-class GuessResult {
-  final int number;
-  final bool success;
-  GuessResult(this.number, this.success);
 }

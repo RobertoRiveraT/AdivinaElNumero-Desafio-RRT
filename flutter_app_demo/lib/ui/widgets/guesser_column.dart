@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import '../../models/column_entry.dart';
 
 class GuesserColumn extends StatefulWidget {
   final String title;
   final Color headerColor;
-  final List<String> entries;
+  final List<ColumnEntry> entries;
 
   const GuesserColumn({
     super.key,
@@ -50,12 +51,16 @@ class _GuesserColumnState extends State<GuesserColumn> {
                 controller: _scrollController,
                 itemCount: widget.entries.length,
                 itemBuilder: (context, index) {
+                  final entry = widget.entries[index];
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
-                      widget.entries[index],
-                      textAlign: TextAlign.center, // centra el texto horizontalmente
-                      style: const TextStyle(fontSize: 14),
+                      entry.text,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: entry.color,
+                      ),
                     ),
                   );
                 },
