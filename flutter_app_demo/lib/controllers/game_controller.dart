@@ -16,12 +16,13 @@
 
 import 'dart:math';
 import 'package:flutter/material.dart';
-import '../models/column_entry.dart'; // 👈 Asegúrate de importar tus modelos
+import '../models/column_entry.dart';
 
 class GameController {
   late int secretNumber;
   late int remainingAttempts;
   late int maxNumber;
+  late int minNumber = 1;
   late int maxAttempts;
 
   // Nota: en dart las variables que empiezan con "_" son privadas
@@ -36,6 +37,11 @@ class GameController {
     'avanzado': {'maxNumber': 100,   'maxAttempts': 15},
     'extremo':  {'maxNumber': 1000,  'maxAttempts': 25},
   };
+
+  // Returns the current number boundaries (or range) for the active difficulty
+  String getBoundaries() {
+    return '( 1 - $maxNumber )';
+  }
 
   // Getters
   List<ColumnEntry> get greaterThanList => _greaterThanList;
@@ -74,6 +80,11 @@ class GameController {
 
   // Devuelve feedback textual y actualiza historial
   String makeGuess(int guess) {
+    
+    if ((guess > maxNumber) || (guess < minNumber)){
+      return 'numero fuera del rango';
+    }
+
     if ((remainingAttempts <= 1) && !(guess == secretNumber) ) {
       // la respuesta no se adivinó, mostrar la respeusta en rojo con un "X"
       _historyList.add(ColumnEntryResult(secretNumber, false, secretNumber));
@@ -86,7 +97,7 @@ class GameController {
     if (guess == secretNumber) {
       _historyList.add(ColumnEntryResult(guess, true, secretNumber));
       resetGame();
-      return 'correct';
+      return 'correcto';
     }
 
     if (guess > secretNumber) {
@@ -98,5 +109,6 @@ class GameController {
       // _historyList.add(ColumnEntryResult(guess, false, secretNumber));
       return 'muy bajo';
     }
+
   }
 }

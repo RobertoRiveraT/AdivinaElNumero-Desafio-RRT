@@ -20,7 +20,7 @@ class LevelSelector extends StatelessWidget {
     return Column(
       children: [
         Text(
-          'Dificultad: ${levels[selectedIndex].toUpperCase()}',
+          'Dificultad: ${levels[selectedIndex].toUpperCase()} ${controller.getBoundaries()}',
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         Slider(

@@ -95,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   controller: _textCtrl,
                                   keyboardType: TextInputType.number,
                                   decoration: const InputDecoration(
-                                    labelText: 'Tu número ( X )',
+                                    labelText: 'Tu número ( X? )',
                                     border: OutlineInputBorder(),
                                   ),
                                 ),
@@ -146,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 _feedback,
                                 style: TextStyle(
                                   fontSize: 18,
-                                  color: _feedback == 'correct'
+                                  color: _feedback == 'correcto'
                                       ? Colors.green
                                       : (_feedback == 'Game over'
                                           ? Colors.red
